@@ -1,0 +1,6 @@
+name = Orders
+description = General module for buying
+core = 7.x
+
+
+files[] = orders.module

@@ -16,18 +16,9 @@ function orders_menu() {
     'title'            => t('You are finishing the shopping process here'),
     'page callback'    => 'drupal_get_form',
     'page arguments'   => array('_select_form_item',),
-    'access arguments' => TRUE,
-    //'file'             => 'includes/orders.admin.inc',
     'type'             => MENU_CALLBACK,
+    'access arguments' => array('allOrdersAdmin'),
   );
-
-   $items['orders/i'] = array(
-    'page callback' => '_get_price',
-    'page arguments' => array(2),
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  );
-
 
   return $items;
 }
@@ -35,13 +26,22 @@ function orders_menu() {
 
 
 
+function orders_permission(){
+	return array(
+      'allOrdersAdmin' =>  array(
+        'title' => t('Administer Orders'),
+        'description' => t('Administer variables employed by Orders'),
+      ),
+    );
+}
+
 /*
  * Implmentacion de hook_block_info()
  */
 function orders_block_info(){
   $blocks   = array();
   $blocks['fselect'] = array(
-    'info' => t('Login Block'),
+    'info' => t('Order'),
   );
   
   return $blocks;
@@ -49,13 +49,12 @@ function orders_block_info(){
 
 
 function orders_block_view($delta = ''){
-  global $car;
   $block = array();
   switch ($delta) {
     case 'fselect':
       $block['subject'] = '';
       $block['content'] = array(
-        '#output'       => _get_order_form()(),
+        '#output'       => _get_query_invoices(),
       );
       break;
   }
@@ -119,6 +118,8 @@ function flags(){
 	 	$discou = _get_discount($nid)/100;
 	 	$precP  = $precio - ($precio*$discou);
 	 	$number = $aInfo->field_field_number[0]['raw']['value'];
+	 	$typeCat= $aInfo->field_field_types_of_cupcakes[0]['raw']['taxonomy_term']->name;
+		$uid=$aInfo->flagging_node_uid;
 
 	 	$precioPar = ($precP *$number)+$precioPar; 
 	}
@@ -166,18 +167,48 @@ function _select_form_item ($form, &$form_state){
 }
 
 function _select_form_item_submit($form, &$form_state){
-  $items = $form_state['values'];
+    $items = $form_state['values'];
   
+    $view_name = 'flags';
+	$display = 'page_1';	 
+	$view_content = views_get_view_result($view_name,$display);
+    $precioPar=0;
 
-  $car[]= array(
-	  $car [$nid] =array(
-	  	  'nid'=> $nid,
-	  	  'num'=>$items['voc'],
-	  	)
-  );
- 
+	foreach ($view_content as $aInfo) {
+		$title  = $aInfo->node_title;
+	 	$nid    = $aInfo->nid;
+	 	$flagid = $aInfo->flagging_node_flagging_id;
+	 	$fecha  = $aInfo->timestamp;
+	 	$precio=10;
+	 	$discou = _get_discount($nid)/100;
+	 	$precP  = $precio - ($precio*$discou);
+	 	$number = $aInfo->field_field_number[0]['raw']['value'];
+	 	$precioPar = $precP *$number; 
+		$typeCat=$aInfo->field_field_types_of_cupcakes[0]['raw']['taxonomy_term']->name;
+		$uid=$aInfo->flagging_node_uid;
+
+		$norder = db_insert('orders') // Table name no longer needs {}
+		->fields(array(
+		  'entity_id' => $nid,
+		  'uid' => $uid,
+		  'cname' => $title,
+		  'typetax'=>$typeCat,
+		  'cnumber'=>$number,
+		  'created'=>$fecha,
+		  'discount'=>$discou,
+		  'price'=>$precP,
+		  'pinvoce'=>$precioPar,
+		))
+		->execute();
+
+	}
+	
+	$num_deleted = db_delete('flagging')
+    ->condition('uid', $uid)
+    ->execute();
   
-  drupal_set_message(t('The configuration options have been saved'));
+  drupal_set_message(t('Thanks for comming to our store'));
+  drupal_goto('<front>');
   
 }
 

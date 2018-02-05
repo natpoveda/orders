@@ -17,7 +17,13 @@ function orders_schema() {
 	            'not null' => TRUE,
 	            'description' => 'Id del Cupcake',
 	        ),
-	        'name' => array(
+	        'uid' => array(
+	            'type' => 'int',
+	            'unsigned' => TRUE,
+	            'not null' => TRUE,
+	            'description' => 'UID',
+	        ),
+	        'cname' => array(
 	            'type' => 'varchar',
 	            'length' => 255,
 	            'not null' => TRUE,
@@ -31,7 +37,7 @@ function orders_schema() {
 	            'default' => 'cupcake',
 	            'description' => 'Category name',
 	        ),
-	        'number' => array(
+	        'cnumber' => array(
 	            'type' => 'numeric',
 	            'size' => 'normal',
 	            'not null' => TRUE,
@@ -46,6 +52,13 @@ function orders_schema() {
 	            'description' => 'Purchase date',
 	        ),
 	        'discount' => array(
+	            'type' => 'numeric',
+	            'size' => 'normal',
+	            'not null' => TRUE,
+	            'default' => 0,
+	            'description' => 'Discount',
+	        ),
+	        'price' => array(
 	            'type' => 'numeric',
 	            'size' => 'normal',
 	            'not null' => TRUE,

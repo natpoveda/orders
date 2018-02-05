@@ -1,6 +1,7 @@
 name = Orders
 description = General module for buying
 core = 7.x
-
+dependencies[] = views
+dependencies[] = flag
 
 files[] = orders.module

@@ -1,0 +1,76 @@
+<?php
+/**
+ * Implements hook_schema().
+ */
+function orders_schema() {
+	$schema['orders'] = array(
+	    'description' => t('Table for saving data from invoces and purchases'),
+	    'fields' => array(
+	    	'delta' => array(
+	        	'type' => 'serial',
+	        	'not null' => TRUE,
+	        	'description' => "The row id",
+	      	),
+	        'entity_id' => array(
+	            'type' => 'int',
+	            'unsigned' => TRUE,
+	            'not null' => TRUE,
+	            'description' => 'Id del Cupcake',
+	        ),
+	        'name' => array(
+	            'type' => 'varchar',
+	            'length' => 255,
+	            'not null' => TRUE,
+	            'default' => 'cupcake',
+	            'description' => 'Cupcake name',
+	        ),
+	        'typetax' => array(
+	            'type' => 'varchar',
+	            'length' => 255,
+	            'not null' => TRUE,
+	            'default' => 'cupcake',
+	            'description' => 'Category name',
+	        ),
+	        'number' => array(
+	            'type' => 'numeric',
+	            'size' => 'normal',
+	            'not null' => TRUE,
+	            'default' => 0,
+	            'description' => 'Quantity',
+	        ),
+	        'created' => array(
+	            'type' => 'numeric',
+	            'size' => 'normal',
+	            'not null' => TRUE,
+	            'default' => 0,
+	            'description' => 'Purchase date',
+	        ),
+	        'discount' => array(
+	            'type' => 'numeric',
+	            'size' => 'normal',
+	            'not null' => TRUE,
+	            'default' => 0,
+	            'description' => 'Discount',
+	        ),
+	    	'pinvoce' => array(
+	            'type' => 'numeric',
+	            'size' => 'normal',
+	            'not null' => TRUE,
+	            'default' => 0,
+	            'description' => 'Invoce price',
+	        ),
+	    ),
+	    'primary key' => array('delta'),
+	);
+
+  return $schema;
+
+}
+
+
+/**
+ * Implements hook_uninstall().
+ */
+function order_uninstall() {
+}
+

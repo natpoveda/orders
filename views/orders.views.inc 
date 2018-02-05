@@ -1,0 +1,19 @@
+<?php
+/**
+ * Implements hook_views_data_alter().
+ *
+ * @param $data
+ *   Information about Views' tables and fields.
+ */
+function orders_views_data_alter(&$data) {
+  // Add the Title form field to 
+	
+  $data['node']['title_edit'] = array(
+    'field' => array(
+      'title' => t('Title form field'),
+      'help' => t('Edit the node title'),
+      'handler' => 'orders_field_handler_title_edit',
+    ),
+  );
+}
+?>
